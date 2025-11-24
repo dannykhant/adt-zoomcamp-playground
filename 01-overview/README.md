@@ -1,0 +1,25 @@
+# Module: 1
+
+- Chat Applications
+    - Great for exploration and brainstorming but less convenient for interactive development
+    - Sometimes LLM models are outdated, so they cannot provide the latest version of codes
+        - ChatGPT
+        - Claude
+        - DeepSeek
+- IDEs with Coding Assistants
+    - Embedded into IDEs
+    - Support inline code suggestions, test generation, multi-file edits
+        - Claude code
+        - Github copilot
+        - Cursor
+        - Pear
+- Project Bootstrapers
+    - To generate starter projects quickly from natural language prompts
+        - Lovable - with frontend/UI focus
+        - Bolt - generates full-stack app quickly
+- Agents
+    - Agents are autonomous coding helpers to read/write files, run commands and manage projects
+    - By providing some prompts, we can make Agents to do some actions
+        - For eg.,
+            - PR-agent - automates pull request reviews and suggestions
+            - Computer-use agent - interacts with computer programs and files
