@@ -26,6 +26,8 @@ const InterviewSessionPage = () => {
   const [stderr, setStderr] = useState<string[]>([]);
   const [duration, setDuration] = useState<number | null>(null);
 
+  const [copied, setCopied] = useState(false);
+
   const shareUrl = useMemo(() => `${window.location.origin}/session/${sessionId}`, [sessionId]);
 
   const handleRun = async () => {
@@ -43,6 +45,8 @@ const InterviewSessionPage = () => {
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     } catch {
       // ignore
     }
@@ -60,8 +64,8 @@ const InterviewSessionPage = () => {
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2 text-xs">
-            <Button variant="outline" size="sm" onClick={handleCopy}>
-              Copy room link
+            <Button variant="outline" size="sm" className="h-8" onClick={handleCopy}>
+              {copied ? "Copied" : "Copy room link"}
             </Button>
             {localStorage.getItem("isLoggedIn") === "true" && (
               <Button
