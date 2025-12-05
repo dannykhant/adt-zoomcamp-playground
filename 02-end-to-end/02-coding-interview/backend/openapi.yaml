@@ -1,0 +1,178 @@
+openapi: 3.0.0
+info:
+  title: Coding Interview Platform API
+  version: 1.0.0
+  description: API for the Coding Interview Platform
+
+paths:
+  /auth/login:
+    post:
+      summary: Login for interviewers
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  token_type:
+                    type: string
+        '401':
+          description: Invalid credentials
+
+  /sessions:
+    post:
+      summary: Create a new interview session
+      operationId: create_session
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Session created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '401':
+          description: Unauthorized
+
+  /sessions/{session_id}:
+    get:
+      summary: Get session details
+      operationId: get_session
+      parameters:
+        - name: session_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Session details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '404':
+          description: Session not found
+
+    delete:
+      summary: End an interview session
+      operationId: end_session
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: session_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Session ended successfully
+        '404':
+          description: Session not found
+        '401':
+          description: Unauthorized
+
+  /sessions/{session_id}/state:
+    get:
+      summary: Get the current state of the session (code, language)
+      operationId: get_session_state
+      parameters:
+        - name: session_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Current session state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionState'
+        '404':
+          description: Session not found
+
+    post:
+      summary: Update the session state
+      operationId: update_session_state
+      parameters:
+        - name: session_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionState'
+      responses:
+        '200':
+          description: State updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionState'
+        '404':
+          description: Session not found
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Session:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "sess_12345"
+        created_at:
+          type: string
+          format: date-time
+        is_active:
+          type: boolean
+        language:
+          type: string
+          enum: [javascript, python, rust]
+          default: javascript
+        code:
+          type: string
+
+    SessionState:
+      type: object
+      required:
+        - code
+        - language
+      properties:
+        code:
+          type: string
+        language:
+          type: string
+          enum: [javascript, python, rust]
