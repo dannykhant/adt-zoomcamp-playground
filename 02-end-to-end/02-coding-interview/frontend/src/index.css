@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design system: colors, typography, gradients, motion */
+
+@layer base {
+  :root {
+    /* Core palette */
+    --background: 222 47% 6%;
+    --foreground: 210 40% 96%;
+
+    --card: 222 47% 10%;
+    --card-foreground: 210 40% 96%;
+
+    --popover: 222 47% 8%;
+    --popover-foreground: 210 40% 96%;
+
+    --primary: 258 90% 66%; /* electric violet */
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 222 40% 16%;
+    --secondary-foreground: 210 40% 96%;
+
+    --muted: 222 30% 14%;
+    --muted-foreground: 215 20% 70%;
+
+    --accent: 192 95% 55%; /* cyan */
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 222 32% 18%;
+    --input: 222 32% 18%;
+    --ring: 258 90% 66%;
+
+    --radius: 0.75rem;
+
+    /* Sidebar */
+    --sidebar-background: 222 47% 4%;
+    --sidebar-foreground: 210 40% 96%;
+    --sidebar-primary: 258 90% 66%;
+    --sidebar-primary-foreground: 222 47% 6%;
+    --sidebar-accent: 222 32% 14%;
+    --sidebar-accent-foreground: 210 40% 96%;
+    --sidebar-border: 222 32% 18%;
+    --sidebar-ring: 192 95% 55%;
+
+    /* Extended tokens */
+    --bg-elevated: 222 47% 10%;
+    --bg-code: 222 40% 8%;
+    --bg-code-soft: 222 40% 12%;
+    --code-foreground: 210 40% 96%;
+    --code-comment: 215 16% 60%;
+
+    --gradient-primary: 135deg, hsl(258 90% 66%), hsl(192 95% 55%);
+    --gradient-soft: 135deg, hsl(222 47% 8%), hsl(222 47% 4%);
+
+    --shadow-soft: 0 18px 45px hsl(258 90% 10% / 0.6);
+    --shadow-glow: 0 0 40px hsl(192 95% 55% / 0.45);
+
+    --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+    --font-mono: "SF Mono", ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+
+  .dark {
+    /* Keep dark theme consistent with root for now */
+    --background: 222 47% 4%;
+    --foreground: 210 40% 96%;
+
+    --card: 222 47% 8%;
+    --card-foreground: 210 40% 96%;
+
+    --popover: 222 47% 6%;
+    --popover-foreground: 210 40% 96%;
+
+    --primary: 258 90% 66%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 222 40% 14%;
+    --secondary-foreground: 210 40% 96%;
+
+    --muted: 222 32% 12%;
+    --muted-foreground: 215 20% 70%;
+
+    --accent: 192 95% 55%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 222 32% 18%;
+    --input: 222 32% 18%;
+    --ring: 258 90% 66%;
+
+    --sidebar-background: 222 47% 2%;
+    --sidebar-foreground: 210 40% 96%;
+    --sidebar-primary: 258 90% 66%;
+    --sidebar-primary-foreground: 222 47% 6%;
+    --sidebar-accent: 222 32% 14%;
+    --sidebar-accent-foreground: 210 40% 96%;
+    --sidebar-border: 222 32% 18%;
+    --sidebar-ring: 192 95% 55%;
+
+    --bg-elevated: 222 47% 8%;
+    --bg-code: 222 40% 6%;
+    --bg-code-soft: 222 40% 10%;
+    --code-foreground: 210 40% 96%;
+    --code-comment: 215 16% 60%;
+
+    --gradient-primary: 135deg, hsl(258 90% 66%), hsl(192 95% 55%);
+    --gradient-soft: 135deg, hsl(222 47% 4%), hsl(222 47% 10%);
+
+    --shadow-soft: 0 18px 45px hsl(258 90% 10% / 0.7);
+    --shadow-glow: 0 0 40px hsl(192 95% 55% / 0.55);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+  }
+
+  code, pre, kbd, samp {
+    font-family: var(--font-mono);
+  }
+
+  /* Signature radial background for the app shell */
+  #root {
+    min-height: 100vh;
+    background-image:
+      radial-gradient(circle at top left, hsl(192 95% 55% / 0.16), transparent 55%),
+      radial-gradient(circle at bottom right, hsl(258 90% 66% / 0.16), transparent 55%),
+      radial-gradient(circle at center, hsl(222 47% 10% / 0.9), hsl(222 47% 4%));
+  }
+}

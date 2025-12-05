@@ -1,0 +1,20 @@
+#root {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+/* Legacy classes kept for safety but unused in new layout */
+.logo {
+  height: 6em;
+  padding: 1.5em;
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
