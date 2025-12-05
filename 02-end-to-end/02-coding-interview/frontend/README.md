@@ -1,73 +1,80 @@
-# Welcome to your Lovable project
+# Coding Interview Platform
 
-## Project info
+A real-time collaborative coding interview platform designed to streamline technical interviews. This application allows interviewers to create secure coding sessions and candidates to join instantly via a shared link, with no login required for candidates.
 
-**URL**: https://lovable.dev/projects/5ec728e8-0bec-4af0-91ff-fb79cf91292d
+## Features
 
-## How can I edit this code?
+-   **Real-time Collaboration**: Shared code editor allowing both parties to type and view changes instantly.
+-   **Multi-Language Support**: Write and run code in JavaScript, Python, and Rust.
+    -   *Note: JavaScript runs in a sandboxed worker. Python & Rust use mocked execution for this demo.*
+-   **Role-Based Access**:
+    -   **Interviewers**: Secure login to create, manage, and end interview sessions.
+    -   **Candidates**: Frictionless entry via shared links or session IDs.
+-   **Modern UI/UX**: Built with a premium, responsive design using Tailwind CSS and shadcn/ui.
+-   **Session Management**: Generate unique interview links and regenerate them as needed.
 
-There are several ways of editing your application.
+## Tech Stack
 
-**Use Lovable**
+-   **Framework**: [React](https://react.dev/) with [Vite](https://vitejs.dev/)
+-   **Language**: [TypeScript](https://www.typescriptlang.org/)
+-   **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+-   **UI Components**: [shadcn/ui](https://ui.shadcn.com/)
+-   **Icons**: [Lucide React](https://lucide.dev/)
+-   **Routing**: [React Router](https://reactrouter.com/)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/5ec728e8-0bec-4af0-91ff-fb79cf91292d) and start prompting.
+## Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
 
-**Use your preferred IDE**
+-   **Node.js**: Version 20 or higher is required.
+-   **npm** or **bun**: Package manager.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Installation
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+1.  Navigate to the frontend directory:
+    ```bash
+    cd frontend
+    ```
 
-Follow these steps:
+2.  Install dependencies:
+    ```bash
+    npm install
+    # or
+    bun install
+    ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+3.  Start the development server:
+    ```bash
+    npm run dev
+    ```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+4.  Open your browser and navigate to `http://localhost:8080` (or the port shown in your terminal).
 
-# Step 3: Install the necessary dependencies.
-npm i
+## Usage Guide
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+### For Interviewers
 
-**Edit a file directly in GitHub**
+1.  **Login**: Click on the "Interviewer" tab and select "Login as Interviewer".
+    -   *Demo Credentials*: You can use any email (e.g., `admin@example.com`) and any password.
+2.  **Create Session**: Once logged in, you will see your unique interview link.
+    -   Click **Copy link** to share it with a candidate.
+    -   Click the **Refresh icon** inside the input box to generate a new session ID if needed.
+3.  **Start Interview**: Click "Start interview room" to enter the collaborative environment.
+4.  **End Interview**: Inside the room, use the "End Interview" button in the top right to close the session and return to the home page.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### For Candidates
 
-**Use GitHub Codespaces**
+1.  **Join via Link**: Simply open the URL shared by the interviewer.
+2.  **Join via ID**: Alternatively, go to the home page, select the "Candidate" tab, and paste the Room ID or URL.
+3.  **Code**: You can immediately start typing in the shared editor.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Project Structure
 
-## What technologies are used for this project?
+-   `src/pages`: Main application pages (Index, Login, InterviewSessionPage).
+-   `src/components`: Reusable UI components.
+-   `src/utils`: Helper functions for session management and code execution.
+-   `src/hooks`: Custom React hooks (e.g., for collaborative session state).
 
-This project is built with:
+## License
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/5ec728e8-0bec-4af0-91ff-fb79cf91292d) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+This project is open source and available under the MIT License.
