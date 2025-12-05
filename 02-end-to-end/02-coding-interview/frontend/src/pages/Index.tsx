@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,13 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { generateSessionId } from "@/utils/session";
 import { cn } from "@/lib/utils";
+import { LogOut, RefreshCw } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
   const [joinId, setJoinId] = useState("");
   const [copied, setCopied] = useState(false);
+  const [createdId, setCreatedId] = useState(() => generateSessionId());
 
-  const createdId = useMemo(() => generateSessionId(), []);
   const sessionUrl = `${window.location.origin}/session/${createdId}`;
 
   const handleStartInterview = () => {
@@ -28,6 +29,11 @@ const Index = () => {
     } catch {
       // ignore
     }
+  };
+
+  const handleRegenerate = () => {
+    setCreatedId(generateSessionId());
+    setCopied(false);
   };
 
   const handleJoin = () => {
@@ -69,11 +75,13 @@ const Index = () => {
                       <Button
                         variant="ghost"
                         size="sm"
+                        className="h-8 gap-2 text-muted-foreground hover:text-foreground"
                         onClick={() => {
                           localStorage.removeItem("isLoggedIn");
                           navigate(0); // Refresh to update state
                         }}
                       >
+                        <LogOut className="h-3.5 w-3.5" />
                         Logout
                       </Button>
                     </div>
@@ -85,12 +93,23 @@ const Index = () => {
                     <div>
                       <Label htmlFor="created-link">Interview link</Label>
                       <div className="mt-2 flex flex-col gap-2 sm:flex-row">
-                        <Input
-                          id="created-link"
-                          value={sessionUrl}
-                          readOnly
-                          className="flex-1 text-xs sm:text-sm"
-                        />
+                        <div className="relative flex-1">
+                          <Input
+                            id="created-link"
+                            value={sessionUrl}
+                            readOnly
+                            className="pr-10 text-xs sm:text-sm"
+                          />
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 text-muted-foreground hover:text-foreground"
+                            onClick={handleRegenerate}
+                            title="Generate new link"
+                          >
+                            <RefreshCw className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
                         <Button variant="outline" onClick={handleCopy} className="whitespace-nowrap">
                           {copied ? "Copied" : "Copy link"}
                         </Button>
