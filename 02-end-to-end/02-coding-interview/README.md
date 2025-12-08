@@ -1,6 +1,8 @@
 # Coding Interview Platform
  
 This is a full-stack application for a real-time collaborative coding interview platform.
+
+![Home](image.png)
  
 ## Project Structure
  
