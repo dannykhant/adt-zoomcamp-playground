@@ -30,7 +30,7 @@ fn main() {
 
 
 export const createSession = async (token: string) => {
-  const response = await fetch("http://127.0.0.1:8000/sessions", {
+  const response = await fetch("/sessions", {
     method: "POST",
     headers: {
       "Authorization": `Bearer ${token}`,
@@ -41,13 +41,13 @@ export const createSession = async (token: string) => {
 };
 
 export const getSession = async (sessionId: string) => {
-  const response = await fetch(`http://127.0.0.1:8000/sessions/${sessionId}`);
+  const response = await fetch(`/sessions/${sessionId}`);
   if (!response.ok) throw new Error("Session not found");
   return response.json();
 };
 
 export const getSessionState = async (sessionId: string) => {
-  const response = await fetch(`http://127.0.0.1:8000/sessions/${sessionId}/state`);
+  const response = await fetch(`/sessions/${sessionId}/state`);
   if (!response.ok) throw new Error("Failed to fetch session state");
   return response.json();
 };
@@ -60,7 +60,7 @@ export const updateSessionState = async (sessionId: string, state: { code: strin
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`http://127.0.0.1:8000/sessions/${sessionId}/state`, {
+  const response = await fetch(`/sessions/${sessionId}/state`, {
     method: "POST",
     headers,
     body: JSON.stringify(state),
@@ -70,7 +70,7 @@ export const updateSessionState = async (sessionId: string, state: { code: strin
 };
 
 export const endSession = async (sessionId: string, token: string) => {
-  const response = await fetch(`http://127.0.0.1:8000/sessions/${sessionId}`, {
+  const response = await fetch(`/sessions/${sessionId}`, {
     method: "DELETE",
     headers: {
       "Authorization": `Bearer ${token}`,

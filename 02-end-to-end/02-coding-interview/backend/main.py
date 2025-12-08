@@ -97,3 +97,23 @@ def update_session_state(session_id: str, state: SessionState, db: DbSession):
     db.commit()
     db.refresh(session)
     return SessionState(code=session.code, language=session.language)
+
+import os
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+# Serve React App (only in production/docker where 'static' exists)
+if os.path.exists("static"):
+    # Mount assets
+    app.mount("/assets", StaticFiles(directory="static/assets"), name="assets")
+
+    # Catch-all for SPA
+    @app.get("/{full_path:path}")
+    async def serve_spa(full_path: str):
+        # Allow direct access to files in root of static (e.g. favicon.ico)
+        file_path = f"static/{full_path}"
+        if os.path.exists(file_path) and os.path.isfile(file_path):
+            return FileResponse(file_path)
+        
+        # Otherwise return index.html for client-side routing
+        return FileResponse("static/index.html")

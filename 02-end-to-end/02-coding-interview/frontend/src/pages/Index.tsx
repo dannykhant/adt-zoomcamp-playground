@@ -84,7 +84,7 @@ const Index = () => {
             </h1>
             <p className="max-w-xl text-balance text-sm text-muted-foreground sm:text-base">
               Spin up a shared coding room, watch candidates type in real time, and run code safely in the browser—no
-              logins, no IDE installs.
+              candidate logins, no IDE installs.
             </p>
           </header>
 
@@ -203,7 +203,7 @@ const Index = () => {
             </div>
             <div>
               <dt className="font-medium text-foreground">Safe execution</dt>
-              <dd>Run JavaScript in an isolated worker. Python &amp; Rust use mocked results in this demo.</dd>
+              <dd>Run JavaScript in an isolated worker. Python runs via Pyodide (WASM). Rust uses mocked results in this demo.</dd>
             </div>
           </dl>
         </section>
