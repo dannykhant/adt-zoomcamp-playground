@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: coding-interview-app
+    runtime: docker
+    rootDir: 02-end-to-end/02-coding-interview
+    plan: free
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: interview-db
+          property: connectionString
+
+databases:
+  - name: interview-db
+    plan: free
+    databaseName: interview_db
+    user: interview_user
