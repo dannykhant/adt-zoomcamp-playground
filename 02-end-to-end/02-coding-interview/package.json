@@ -1,0 +1,14 @@
+{
+    "name": "coding-interview-platform",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+        "dev:backend": "cd backend && uv run fastapi dev main.py",
+        "dev:frontend": "cd frontend && npm run dev",
+        "install:all": "npm install && cd frontend && npm install && cd ../backend && uv sync"
+    },
+    "devDependencies": {
+        "concurrently": "^9.1.0"
+    }
+}
