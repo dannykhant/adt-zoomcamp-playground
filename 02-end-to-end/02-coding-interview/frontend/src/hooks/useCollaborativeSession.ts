@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import type { SessionState, SupportedLanguage } from "@/utils/session";
-import { loadSessionState, mergeRemoteUpdate, persistSessionState } from "@/utils/session";
-
-const buildChannelName = (sessionId: string) => `code-interview-room::${sessionId}`;
+import { getSessionState, updateSessionState, DEFAULT_SNIPPETS } from "@/utils/session";
+import { toast } from "sonner";
 
 export interface UseCollaborativeSessionOptions {
   sessionId: string;
@@ -19,43 +18,74 @@ export const useCollaborativeSession = (
   options: UseCollaborativeSessionOptions,
 ): UseCollaborativeSessionResult => {
   const { sessionId, initialLanguage = "javascript" } = options;
-  const [state, setState] = useState<SessionState>(() =>
-    loadSessionState(sessionId, initialLanguage),
-  );
+  const [state, setState] = useState<SessionState>({
+    code: DEFAULT_SNIPPETS[initialLanguage],
+    language: initialLanguage,
+  });
 
-  const channel = useMemo(() => {
-    if (typeof window === "undefined" || typeof BroadcastChannel === "undefined") return null;
-    return new BroadcastChannel(buildChannelName(sessionId));
+  const isLocalChange = useRef(false);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchState = async () => {
+      try {
+        const remoteState = await getSessionState(sessionId);
+        if (isMounted && !isLocalChange.current) {
+          setState({
+            code: remoteState.code || DEFAULT_SNIPPETS[remoteState.language as SupportedLanguage] || "",
+            language: remoteState.language as SupportedLanguage
+          });
+        }
+      } catch (error) {
+        // console.error("Failed to fetch session state", error);
+      }
+    };
+
+    fetchState();
+    const interval = setInterval(fetchState, 2000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, [sessionId]);
 
-  // Listen for remote updates
-  useEffect(() => {
-    if (!channel) return;
-
-    const handler = (event: MessageEvent<SessionState>) => {
-      setState((current) => mergeRemoteUpdate(current, event.data));
-    };
-
-    channel.addEventListener("message", handler as EventListener);
-    return () => {
-      channel.removeEventListener("message", handler as EventListener);
-    };
-  }, [channel]);
-
-  // Persist changes locally & broadcast
-  useEffect(() => {
-    persistSessionState(state);
-    if (!channel) return;
-    channel.postMessage(state);
-  }, [state, channel]);
-
-  const setLanguage = (language: SupportedLanguage) => {
-    setState((prev) => ({ ...prev, language, updatedAt: Date.now() }));
+  const setLanguage = async (language: SupportedLanguage) => {
+    const newState = { ...state, language, code: DEFAULT_SNIPPETS[language] };
+    setState(newState);
+    isLocalChange.current = true;
+    try {
+      const token = localStorage.getItem("token") || undefined;
+      await updateSessionState(sessionId, newState, token);
+    } catch (error) {
+      toast.error("Failed to sync language change");
+    } finally {
+      setTimeout(() => { isLocalChange.current = false; }, 1000);
+    }
   };
 
   const setCode = (code: string) => {
-    setState((prev) => ({ ...prev, code, updatedAt: Date.now() }));
+    const newState = { ...state, code };
+    setState(newState);
+    isLocalChange.current = true;
   };
+
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (isLocalChange.current) {
+        try {
+          const token = localStorage.getItem("token") || undefined;
+          await updateSessionState(sessionId, state, token);
+        } catch (error) {
+          console.error("Failed to sync code", error);
+        } finally {
+          isLocalChange.current = false;
+        }
+      }
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [state, sessionId]);
 
   return { state, setLanguage, setCode };
 };

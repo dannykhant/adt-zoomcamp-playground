@@ -1,10 +1,8 @@
 export type SupportedLanguage = "javascript" | "python" | "rust";
 
 export interface SessionState {
-  sessionId: string;
   language: SupportedLanguage;
   code: string;
-  updatedAt: number;
 }
 
 export const DEFAULT_SNIPPETS: Record<SupportedLanguage, string> = {
@@ -30,59 +28,55 @@ fn main() {
 }`,
 };
 
-export const generateSessionId = () => {
-  const alphabet = "abcdefghjkmnpqrstuvwxyz23456789";
-  const segments = [4, 4];
-  const segment = () =>
-    Array.from({ length: 4 }, () => alphabet[Math.floor(Math.random() * alphabet.length)]).join("");
-  return segments.map(segment).join("-");
+
+export const createSession = async (token: string) => {
+  const response = await fetch("http://127.0.0.1:8000/sessions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) throw new Error("Failed to create session");
+  return response.json();
 };
 
-export const buildStorageKey = (sessionId: string) => `interview-session::${sessionId}`;
+export const getSession = async (sessionId: string) => {
+  const response = await fetch(`http://127.0.0.1:8000/sessions/${sessionId}`);
+  if (!response.ok) throw new Error("Session not found");
+  return response.json();
+};
 
-export const loadSessionState = (sessionId: string, language: SupportedLanguage): SessionState => {
-  const key = buildStorageKey(sessionId);
-  if (typeof window === "undefined") {
-    return {
-      sessionId,
-      language,
-      code: DEFAULT_SNIPPETS[language],
-      updatedAt: Date.now(),
-    };
+export const getSessionState = async (sessionId: string) => {
+  const response = await fetch(`http://127.0.0.1:8000/sessions/${sessionId}/state`);
+  if (!response.ok) throw new Error("Failed to fetch session state");
+  return response.json();
+};
+
+export const updateSessionState = async (sessionId: string, state: { code: string; language: string }, token?: string) => {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
   }
 
-  try {
-    const raw = window.localStorage.getItem(key);
-    if (!raw) {
-      return {
-        sessionId,
-        language,
-        code: DEFAULT_SNIPPETS[language],
-        updatedAt: Date.now(),
-      };
-    }
-    const parsed = JSON.parse(raw) as SessionState;
-    return parsed;
-  } catch {
-    return {
-      sessionId,
-      language,
-      code: DEFAULT_SNIPPETS[language],
-      updatedAt: Date.now(),
-    };
-  }
+  const response = await fetch(`http://127.0.0.1:8000/sessions/${sessionId}/state`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(state),
+  });
+  if (!response.ok) throw new Error("Failed to update session state");
+  return response.json();
 };
 
-export const persistSessionState = (state: SessionState) => {
-  if (typeof window === "undefined") return;
-  const key = buildStorageKey(state.sessionId);
-  window.localStorage.setItem(key, JSON.stringify(state));
+export const endSession = async (sessionId: string, token: string) => {
+  const response = await fetch(`http://127.0.0.1:8000/sessions/${sessionId}`, {
+    method: "DELETE",
+    headers: {
+      "Authorization": `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) throw new Error("Failed to end session");
+  return response.json();
 };
 
-export const mergeRemoteUpdate = (local: SessionState, remote: SessionState): SessionState => {
-  // Last-write-wins by timestamp; if equal, favor local to avoid flicker.
-  if (remote.updatedAt > local.updatedAt) {
-    return remote;
-  }
-  return local;
-};

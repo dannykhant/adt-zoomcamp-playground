@@ -8,7 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import CodeEditor from "@/components/CodeEditor";
 import { useCollaborativeSession } from "@/hooks/useCollaborativeSession";
 import { runCode } from "@/utils/codeRunner";
+import { endSession } from "@/utils/session";
 import type { SupportedLanguage } from "@/utils/session";
+import { toast } from "sonner";
 
 const languageLabels: Record<SupportedLanguage, string> = {
   javascript: "JavaScript",
@@ -72,10 +74,16 @@ const InterviewSessionPage = () => {
                 variant="outline"
                 size="sm"
                 className="h-8 border-red-500/20 text-red-500 hover:bg-red-500/10 hover:text-red-600 hover:border-red-500/50"
-                onClick={() => {
+                onClick={async () => {
                   if (window.confirm("Are you sure you want to end the interview?")) {
-                    navigate("/");
-                    // In a real app, this would also notify the server to close the room
+                    try {
+                      const token = localStorage.getItem("token");
+                      if (token) await endSession(sessionId, token);
+                      toast.success("Session ended");
+                      navigate("/");
+                    } catch (error) {
+                      toast.error("Failed to end session");
+                    }
                   }
                 }}
               >

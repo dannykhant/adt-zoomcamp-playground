@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { generateSessionId } from "@/utils/session";
+import { createSession } from "@/utils/session";
 import { cn } from "@/lib/utils";
 import { LogOut, RefreshCw } from "lucide-react";
 
@@ -13,12 +13,39 @@ const Index = () => {
   const navigate = useNavigate();
   const [joinId, setJoinId] = useState("");
   const [copied, setCopied] = useState(false);
-  const [createdId, setCreatedId] = useState(() => generateSessionId());
+  const [createdId, setCreatedId] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const hasCreated = useRef(false);
 
-  const sessionUrl = `${window.location.origin}/session/${createdId}`;
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
+  useEffect(() => {
+    if (isLoggedIn && !createdId && !hasCreated.current) {
+      hasCreated.current = true;
+      handleCreateSession();
+    }
+  }, [isLoggedIn]);
+
+  const handleCreateSession = async () => {
+    setIsLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      const session = await createSession(token);
+      setCreatedId(session.id);
+    } catch (error) {
+      console.error("Failed to create session", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const sessionUrl = createdId ? `${window.location.origin}/session/${createdId}` : "Generating...";
 
   const handleStartInterview = () => {
-    navigate(`/session/${createdId}`);
+    if (createdId) {
+      navigate(`/session/${createdId}`);
+    }
   };
 
   const handleCopy = async () => {
@@ -32,7 +59,7 @@ const Index = () => {
   };
 
   const handleRegenerate = () => {
-    setCreatedId(generateSessionId());
+    handleCreateSession();
     setCopied(false);
   };
 
@@ -67,7 +94,7 @@ const Index = () => {
               <TabsTrigger value="candidate">I&apos;m a candidate</TabsTrigger>
             </TabsList>
             <TabsContent value="interviewer" className="pt-4">
-              {localStorage.getItem("isLoggedIn") === "true" ? (
+              {isLoggedIn ? (
                 <Card className="border border-border/70 bg-card/70 backdrop-blur-sm">
                   <CardHeader>
                     <div className="flex items-center justify-between">
@@ -78,6 +105,7 @@ const Index = () => {
                         className="h-8 gap-2 text-muted-foreground hover:text-foreground"
                         onClick={() => {
                           localStorage.removeItem("isLoggedIn");
+                          localStorage.removeItem("token");
                           navigate(0); // Refresh to update state
                         }}
                       >
@@ -99,6 +127,7 @@ const Index = () => {
                             value={sessionUrl}
                             readOnly
                             className="pr-10 text-xs sm:text-sm"
+                            disabled={isLoading}
                           />
                           <Button
                             variant="ghost"
@@ -106,17 +135,18 @@ const Index = () => {
                             className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 text-muted-foreground hover:text-foreground"
                             onClick={handleRegenerate}
                             title="Generate new link"
+                            disabled={isLoading}
                           >
-                            <RefreshCw className="h-3.5 w-3.5" />
+                            <RefreshCw className={cn("h-3.5 w-3.5", isLoading && "animate-spin")} />
                           </Button>
                         </div>
-                        <Button variant="outline" onClick={handleCopy} className="whitespace-nowrap">
+                        <Button variant="outline" onClick={handleCopy} className="whitespace-nowrap" disabled={!createdId}>
                           {copied ? "Copied" : "Copy link"}
                         </Button>
                       </div>
                     </div>
                     <div className="flex flex-wrap gap-3">
-                      <Button variant="hero" size="lg" onClick={handleStartInterview}>
+                      <Button variant="hero" size="lg" onClick={handleStartInterview} disabled={!createdId || isLoading}>
                         Start interview room
                       </Button>
                       <p className="text-xs text-muted-foreground">

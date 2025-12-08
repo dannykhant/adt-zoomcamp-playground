@@ -13,17 +13,38 @@ const Login = () => {
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
 
-        // Mock login - allow any credentials for now
-        setTimeout(() => {
+        try {
+            const formData = new URLSearchParams();
+            formData.append('username', email);
+            formData.append('password', password);
+
+            const response = await fetch('http://127.0.0.1:8000/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: formData,
+            });
+
+            if (!response.ok) {
+                throw new Error('Invalid credentials');
+            }
+
+            const data = await response.json();
+            localStorage.setItem("token", data.access_token);
             localStorage.setItem("isLoggedIn", "true");
             toast.success("Logged in successfully");
-            setIsLoading(false);
             navigate("/");
-        }, 1000);
+        } catch (error) {
+            toast.error("Login failed. Please check your credentials.");
+            console.error("Login error:", error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (

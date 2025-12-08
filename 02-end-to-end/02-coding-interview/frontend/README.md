@@ -50,12 +50,22 @@ A real-time collaborative coding interview platform designed to streamline techn
 
 4.  Open your browser and navigate to `http://localhost:8080` (or the port shown in your terminal).
 
+## Running Tests
+
+Run the unit tests using `npm` or `bun`:
+
+```bash
+npm run test
+# or
+bun run test
+```
+
 ## Usage Guide
 
 ### For Interviewers
 
 1.  **Login**: Click on the "Interviewer" tab and select "Login as Interviewer".
-    -   *Demo Credentials*: You can use any email (e.g., `admin@example.com`) and any password.
+    -   *Demo Credentials*: Use `admin@example.com` / `password`.
 2.  **Create Session**: Once logged in, you will see your unique interview link.
     -   Click **Copy link** to share it with a candidate.
     -   Click the **Refresh icon** inside the input box to generate a new session ID if needed.
