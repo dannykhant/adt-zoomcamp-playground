@@ -139,7 +139,7 @@ const InterviewSessionPage = () => {
             <CardHeader className="pb-3">
               <CardTitle className="text-sm">Output &amp; console</CardTitle>
               <CardDescription className="text-xs">
-                JavaScript runs in a sandboxed worker. Python &amp; Rust show mocked output in this demo.
+                JavaScript runs in a sandboxed worker. Python runs via Pyodide (WASM). Rust uses mocked results in this demo.
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-1 flex-col">

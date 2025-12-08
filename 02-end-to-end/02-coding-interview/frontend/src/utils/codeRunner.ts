@@ -1,3 +1,5 @@
+import { loadPyodide } from "pyodide";
+
 export type SupportedLanguage = "javascript" | "python" | "rust";
 
 export interface RunRequest {
@@ -111,7 +113,46 @@ const runJavaScriptSafely = async (code: string): Promise<Omit<RunResult, "langu
   });
 };
 
-const runMockLanguage = async (language: Exclude<SupportedLanguage, "javascript">, code: string) => {
+let pyodideInstance: any = null;
+
+const initPyodide = async () => {
+  if (pyodideInstance) return pyodideInstance;
+  pyodideInstance = await loadPyodide({
+    indexURL: "https://cdn.jsdelivr.net/pyodide/v0.29.0/full/",
+  });
+  return pyodideInstance;
+};
+
+const runPythonSafely = async (code: string): Promise<Omit<RunResult, "language">> => {
+  try {
+    const py = await initPyodide();
+    const start = performance.now();
+
+    const stdout: string[] = [];
+    const stderr: string[] = [];
+
+    py.setStdout({ batched: (msg: string) => stdout.push(msg) });
+    py.setStderr({ batched: (msg: string) => stderr.push(msg) });
+
+    await py.runPythonAsync(code);
+
+    return {
+      stdout,
+      stderr,
+      durationMs: performance.now() - start,
+      didTimeout: false,
+    };
+  } catch (err: any) {
+    return {
+      stdout: [],
+      stderr: [String(err)],
+      durationMs: 0,
+      didTimeout: false,
+    };
+  }
+};
+
+const runMockLanguage = async (language: Exclude<SupportedLanguage, "javascript" | "python">, code: string) => {
   const start = performance.now();
   // In a real system we would load a WASM runtime; for this front-end demo we surface a clear mocked execution.
   const info = `Mock execution for ${language} (no runtime loaded). Code length: ${code.length} chars.`;
@@ -137,6 +178,11 @@ export const runCode = async ({ code, language }: RunRequest): Promise<RunResult
 
   if (language === "javascript") {
     const result = await runJavaScriptSafely(code);
+    return { language, ...result };
+  }
+
+  if (language === "python") {
+    const result = await runPythonSafely(code);
     return { language, ...result };
   }
 

@@ -6,7 +6,7 @@ A real-time collaborative coding interview platform designed to streamline techn
 
 -   **Real-time Collaboration**: Shared code editor allowing both parties to type and view changes instantly.
 -   **Multi-Language Support**: Write and run code in JavaScript, Python, and Rust.
-    -   *Note: JavaScript runs in a sandboxed worker. Python & Rust use mocked execution for this demo.*
+    -   *Note: JavaScript runs in a sandboxed worker. Python runs via Pyodide (WASM). Rust uses mocked execution for this demo.*
 -   **Role-Based Access**:
     -   **Interviewers**: Secure login to create, manage, and end interview sessions.
     -   **Candidates**: Frictionless entry via shared links or session IDs.
