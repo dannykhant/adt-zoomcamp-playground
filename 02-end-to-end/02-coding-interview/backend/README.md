@@ -84,7 +84,7 @@ fastapi dev main.py
 
 ## Running Tests
 
-Run the unit tests using `pytest`:
+Run the tests (including unit and integration tests) using `pytest`:
 
 ```bash
 # Using uv
