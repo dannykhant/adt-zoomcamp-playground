@@ -1,0 +1,73 @@
+# Module: 3
+
+### MCP
+
+- Model Context Protocol
+- Open standard to build two way connections between data sources and AI-powered tools
+- Why MCP?
+    - Before MCP, we need to expose API for each of the data sources to LLM
+        - Data source connectors (Github, Slack, etc…) ⇒ Unique API ⇒ LLM
+    - After MCP
+        - Connectors ⇒ Unique API ⇒ MCP ⇒ Unified API ⇒ LLM
+- MCP Integrations
+    - IDE (LLM + MCP client)  ← JSON RPC →(Github, Slack, Airflow, etc…)
+- MCP Architecture
+    - MCP Host
+        - AI application that manages multiple clients
+    - MCP Client
+        - Client that maintains connection to MCP server and get context from MCP server for the MCP host to use
+    - MCP Server
+        - Program that provides context to MCP clients
+    - Architecture
+        - MCP Host (MCP Client) ← JSON-RPC → MCP Server ⇒  API
+- MCP Primitives
+    - Notifications
+    - Server
+        - Tools
+        - Resources
+        - Prompts
+    - Client
+        - Sampling
+        - Roots
+        - Elicitation
+- Server Primitives
+    - Tools
+        - Model controls it
+        - Example
+            - Search flights, send messages, create calendar events
+    - Resources
+        - Application controls it
+        - Example
+            - Retrieve documents, access knowledge bases, read calendars
+    - Prompts
+        - User controls it
+        - Example
+            - Plan a vacation, summarize my meetings, draft an email
+- Client Primitives
+    - Sampling
+        - Handing off LLM calling to client
+        - It’s like - asking LLM to book a flight and then LLM comes back with a few questions for user like your name, your other info, etc…
+    - Roots
+        - Read specific files
+    - Elicitation
+        - Ask user details
+- MCP Communication
+    - MCP use JSON to communicate
+    - JSON can be sent by following ways
+        - Stdio
+        - Streamable HTTP
+- Stdio
+    - MCP client → [ stdin → MCP server ]
+    - [ MCP server → stdout ] → MCP client
+- Streamable HTTP
+    - Client → Call tool POST request → Server
+    - Server → SSE response → Client
+
+### MCP + Dev Workflow
+
+- Context7
+    - MCP server for documentations
+- copilot-instructions.md
+    - A special Markdown file used to provide custom, contextual instructions to GitHub Copilot within Visual Studio Code
+- Hashnode
+    - Blogging platform for developers
